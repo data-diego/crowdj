@@ -45,7 +45,7 @@ CrowDJ is a Discord bot that democratizes music control at hackathons by letting
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/crowdj.git
+git clone https://github.com/data-diego/crowdj.git
 cd crowdj
 ```
 
@@ -60,6 +60,12 @@ cp .env.example .env
 # Edit .env with your Discord and Spotify API credentials
 ```
 
+3.1. Get your spotify refresh token
+```bash
+npm run auth
+```
+And copy the refresh token to the `.env` file
+
 4. Run the bot
 ```bash
 npm start
@@ -73,6 +79,7 @@ Create a `.env` file in the root directory with the following variables:
 DISCORD_TOKEN=your_discord_bot_token    # Bot token from Discord Developer Portal
 CLIENT_ID=your_discord_client_id        # Application ID from Discord Developer Portal
 
+# Spotify Configuration
 SPOTIFY_CLIENT_ID=your_spotify_client_id  # Client ID from Spotify Developer Dashboard
 SPOTIFY_CLIENT_SECRET=your_spotify_client_secret  # Client Secret from Spotify Developer Dashboard
 SPOTIFY_PLAYLIST_ID=your_spotify_playlist_id  # Playlist ID from Spotify
