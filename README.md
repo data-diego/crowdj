@@ -64,14 +64,17 @@ cp .env.example .env
 ```bash
 npm start
 ```
-
 ## 🔑 Environment Variables
 
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Discord Configuration
+DISCORD_TOKEN=your_discord_bot_token    # Bot token from Discord Developer Portal
+CLIENT_ID=your_discord_client_id        # Application ID from Discord Developer Portal
 ```
-DISCORD_TOKEN=your_discord_bot_token
-SPOTIFY_CLIENT_ID=your_spotify_client_id
-SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-```
+
+It's recommended to have 2 bots, one for development and another for production, to use one or the other put the appropiate env variables at `.env`
 
 ## 🤝 Contributing
 
