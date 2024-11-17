@@ -72,7 +72,15 @@ Create a `.env` file in the root directory with the following variables:
 # Discord Configuration
 DISCORD_TOKEN=your_discord_bot_token    # Bot token from Discord Developer Portal
 CLIENT_ID=your_discord_client_id        # Application ID from Discord Developer Portal
+
+SPOTIFY_CLIENT_ID=your_spotify_client_id  # Client ID from Spotify Developer Dashboard
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret  # Client Secret from Spotify Developer Dashboard
+SPOTIFY_PLAYLIST_ID=your_spotify_playlist_id  # Playlist ID from Spotify
+SPOTIFY_REDIRECT_URI=http://localhost:8888/callback  # Redirect URI used to get the Refresh Token
+SPOTIFY_REFRESH_TOKEN=your_spotify_refresh_token  # Refresh Token from Spotify
 ```
+
+The `SPOTIFY_REFRESH_TOKEN` is a token that you can get by running the script `npm run auth` and following the instructions of the command line.
 
 It's recommended to have 2 bots, one for development and another for production, to use one or the other put the appropiate env variables at `.env`
 
