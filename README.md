@@ -29,17 +29,15 @@ CrowDJ is a Discord bot that democratizes music control at hackathons by letting
 
 ## 🤖 Commands
 
-- `!add [song name/URL]` - Add a song to the queue
-- `!skip` - Vote to skip the current track
-- `!queue` - Display current playlist
-- `!playing` - Show current track info
+- `/help` - Display the list of available commands
+- `/nowplaying` - Display the current song
+- `/addsong <song>` - Add a song to the queue
 
 ## 🔧 Technical Stack
 
-- Discord API
-- Spotify Web API
 - Node.js
-- MongoDB (queue/state management)
+- Discord API (`discord.js`)
+- Spotify Web API
 
 ## 📦 Installation
 
@@ -98,10 +96,6 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 ## 📝 License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
-## 🎫 Support
-
-Join our [Discord server](https://discord.gg/crowdj) for help and updates!
 
 ---
 Made with ❤️ for hackathons worldwide 🌎
