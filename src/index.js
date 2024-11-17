@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { registerCommands } from './commands/registerCommands.js';
 import { handleCommands } from './handlers/commandHandler.js';
 import { handleEvents } from './handlers/eventHandler.js';
+import { initializeSpotify } from './services/spotifyClient.js';
 import logger from './utils/logger.js';
 
 // Load environment variables
@@ -25,6 +26,11 @@ process.on('unhandledRejection', (error) => {
 // Initialize bot
 const initializeBot = async () => {
   try {
+    // Initialize Spotify first
+    logger.info('Initializing Spotify client...');
+    await initializeSpotify();
+    logger.info('Spotify client initialized successfully');
+    
     // Register commands
     await registerCommands();
     
