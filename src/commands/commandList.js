@@ -12,8 +12,12 @@ export const commands = [
     description: 'Shows the currently playing song on Spotify'
   },
   {
+    name: 'queue',
+    description: 'Shows the current Spotify queue'
+  },
+  {
     name: 'addsong',
-    description: 'Adds a song to the playlist',
+    description: 'Adds a song to the queue',
     options: [{
       name: 'song',
       type: 3, // STRING

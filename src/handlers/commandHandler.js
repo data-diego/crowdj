@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import logger from '../utils/logger.js';
-import { getCurrentlyPlaying, addSongToPlaylist } from '../services/spotifyService.js';
+import { getCurrentlyPlaying, addSongToQueue, getQueue } from '../services/spotifyService.js';
 
 const handlePing = async (interaction) => {
   const latency = Math.round(interaction.client.ws.ping);
@@ -50,7 +50,7 @@ const handleAddSong = async (interaction) => {
 
   try {
     const query = interaction.options.getString('song');
-    const track = await addSongToPlaylist(query);
+    const track = await addSongToQueue(query);
 
     const embed = new EmbedBuilder()
       .setTitle('Song Added to Playlist')
@@ -64,11 +64,45 @@ const handleAddSong = async (interaction) => {
   }
 };
 
+const handleQueue = async (interaction) => {
+  await interaction.deferReply();
+
+  try {
+    const queue = await getQueue();
+    
+    if (queue.length === 0) {
+      await interaction.editReply('The queue is empty.');
+      return;
+    }
+
+    const embed = new EmbedBuilder()
+      .setTitle('Current Queue')
+      .setColor('#1DB954');
+
+    const queueList = queue
+      .slice(0, 10) // Limit to first 10 songs
+      .map((track, index) => `${index + 1}. [${track.name}](${track.url}) - ${track.artists}`)
+      .join('\n');
+
+    embed.setDescription(queueList);
+
+    if (queue.length > 10) {
+      embed.setFooter({ text: `And ${queue.length - 10} more songs...` });
+    }
+
+    await interaction.editReply({ embeds: [embed] });
+  } catch (error) {
+    logger.error('Error in queue command:', error);
+    await interaction.editReply('Failed to fetch queue.');
+  }
+};
+
 const commandHandlers = {
   ping: handlePing,
   help: handleHelp,
   nowplaying: handleNowPlaying,
-  addsong: handleAddSong,
+  queue: handleQueue,
+  addsong: handleAddSong
 };
 
 export const handleCommands = (client) => {

@@ -80,7 +80,6 @@ CLIENT_ID=your_discord_client_id        # Application ID from Discord Developer 
 # Spotify Configuration
 SPOTIFY_CLIENT_ID=your_spotify_client_id  # Client ID from Spotify Developer Dashboard
 SPOTIFY_CLIENT_SECRET=your_spotify_client_secret  # Client Secret from Spotify Developer Dashboard
-SPOTIFY_PLAYLIST_ID=your_spotify_playlist_id  # Playlist ID from Spotify
 SPOTIFY_REDIRECT_URI=http://localhost:8888/callback  # Redirect URI used to get the Refresh Token
 SPOTIFY_REFRESH_TOKEN=your_spotify_refresh_token  # Refresh Token from Spotify
 ```

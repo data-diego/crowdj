@@ -1,4 +1,3 @@
-import { SPOTIFY_CONFIG } from '../config/spotify.js';
 import spotifyApi from './spotifyClient.js';
 import logger from '../utils/logger.js';
 
@@ -23,7 +22,27 @@ export const getCurrentlyPlaying = async () => {
   }
 };
 
-export const addSongToPlaylist = async (query) => {
+export const getQueue = async () => {
+  try {
+    const response = await spotifyApi.getQueue();
+    
+    if (!response.body || !response.body.queue) {
+      return [];
+    }
+
+    return response.body.queue.map(track => ({
+      name: track.name,
+      artists: track.artists.map(artist => artist.name).join(', '),
+      url: track.external_urls.spotify,
+      albumArt: track.album.images[0]?.url
+    }));
+  } catch (error) {
+    logger.error('Error getting queue:', error);
+    throw error;
+  }
+};
+
+export const addSongToQueue = async (query) => {
   try {
     let trackUri;
 
@@ -42,10 +61,10 @@ export const addSongToPlaylist = async (query) => {
       trackUri = track.uri;
     }
 
-    // Add the track to the playlist
-    await spotifyApi.addTracksToPlaylist(SPOTIFY_CONFIG.playlistId, [trackUri]);
+    // Add track to queue
+    await spotifyApi.addToQueue(trackUri);
     
-    // Get the track details to return
+    // Get track details to return
     const track = await spotifyApi.getTrack(trackUri.split(':')[2]);
     return {
       name: track.body.name,
@@ -53,7 +72,7 @@ export const addSongToPlaylist = async (query) => {
       url: track.body.external_urls.spotify
     };
   } catch (error) {
-    logger.error('Error adding song to playlist:', error);
+    logger.error('Error adding song to queue:', error);
     throw error;
   }
 };
