@@ -1,10 +1,10 @@
-import SpotifyWebApi from 'spotify-web-api-node';
+import CustomSpotifyApi from './spotifyWrapper.js';
 import { config } from 'dotenv';
 import logger from '../utils/logger.js';
 
 config();
 
-const spotifyApi = new SpotifyWebApi({
+const spotifyApi = new CustomSpotifyApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
   refreshToken: process.env.SPOTIFY_REFRESH_TOKEN

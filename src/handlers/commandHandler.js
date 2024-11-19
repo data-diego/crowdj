@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import logger from '../utils/logger.js';
-import { getCurrentlyPlaying, addSongToQueue, getQueue } from '../services/spotifyService.js';
+import { getCurrentlyPlaying, addSongToQueue, getQueue, searchTracks } from '../services/spotifyService.js';
 
 const handlePing = async (interaction) => {
   const latency = Math.round(interaction.client.ws.ping);
@@ -45,24 +45,90 @@ const handleNowPlaying = async (interaction) => {
   }
 };
 
+const NUMBER_EMOJIS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'];
+
 const handleAddSong = async (interaction) => {
   await interaction.deferReply();
 
   try {
     const query = interaction.options.getString('song');
-    const track = await addSongToQueue(query);
+    const tracks = await searchTracks(query);
 
     const embed = new EmbedBuilder()
-      .setTitle('Song Added to Playlist')
-      .setDescription(`Added [${track.name}](${track.url})\nby ${track.artists}`)
-      .setColor('#1DB954');
+      .setTitle('Select a Song')
+      .setDescription(
+        tracks.map((track, i) => 
+          `${NUMBER_EMOJIS[i]} [${track.name}](${track.url})\nby ${track.artists} • ${Math.floor(track.duration / 60)}:${(track.duration % 60).toString().padStart(2, '0')}`
+        ).join('\n\n')
+      )
+      .setColor('#1DB954')
+      .setFooter({ text: 'React with a number to select a song' });
 
-    await interaction.editReply({ embeds: [embed] });
+    const message = await interaction.editReply({ embeds: [embed] });
+    
+    // Add reaction numbers
+    try {
+      for (const emoji of NUMBER_EMOJIS) {
+        await message.react(emoji);
+      }
+    } catch (error) {
+      logger.error('Error adding reactions:', error);
+      await interaction.editReply('Failed to add reaction buttons. Please try again.');
+      return;
+    }
+
+    // Create reaction collector
+    const filter = (reaction, user) => {
+      return NUMBER_EMOJIS.includes(reaction.emoji.name) && user.id === interaction.user.id;
+    };
+
+    const collector = message.createReactionCollector({ 
+      filter, 
+      time: 30000, 
+      max: 1,
+      dispose: true 
+    });
+
+    collector.on('collect', async (reaction) => {
+      try {
+        const selectedIndex = NUMBER_EMOJIS.indexOf(reaction.emoji.name);
+        const selectedTrack = tracks[selectedIndex];
+
+        const addedTrack = await addSongToQueue(selectedTrack.uri);
+
+        const successEmbed = new EmbedBuilder()
+          .setTitle('Song Added to Queue')
+          .setDescription(`Added [${addedTrack.name}](${addedTrack.url})\nby ${addedTrack.artists}`)
+          .setColor('#1DB954');
+
+        if (addedTrack.albumArt) {
+          successEmbed.setThumbnail(addedTrack.albumArt);
+        }
+
+        await interaction.editReply({ embeds: [successEmbed] });
+      } catch (error) {
+        logger.error('Error processing song selection:', error);
+        await interaction.editReply('Failed to add the selected song to the queue. Please try again.');
+      }
+    });
+
+    collector.on('end', async (collected) => {
+      if (collected.size === 0) {
+        const timeoutEmbed = new EmbedBuilder()
+          .setTitle('Selection Timed Out')
+          .setDescription('No song was selected within 30 seconds.')
+          .setColor('#FF0000');
+        
+        await interaction.editReply({ embeds: [timeoutEmbed] });
+      }
+    });
+
   } catch (error) {
     logger.error('Error in addsong command:', error);
-    await interaction.editReply('Failed to add song to playlist. Make sure the song exists on Spotify.');
+    await interaction.editReply('Failed to search for songs. Please try again.');
   }
 };
+
 
 const handleQueue = async (interaction) => {
   await interaction.deferReply();
@@ -96,6 +162,7 @@ const handleQueue = async (interaction) => {
     await interaction.editReply('Failed to fetch queue.');
   }
 };
+
 
 const commandHandlers = {
   ping: handlePing,
