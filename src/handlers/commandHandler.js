@@ -1,6 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import logger from '../utils/logger.js';
 import { getCurrentlyPlaying, addSongToQueue, getQueue, searchTracks } from '../services/spotifyService.js';
+import { trackUserAction } from '../services/actionService.js';
 
 const handlePing = async (interaction) => {
   const latency = Math.round(interaction.client.ws.ping);
@@ -23,6 +24,13 @@ const handleNowPlaying = async (interaction) => {
 
   try {
     const currentTrack = await getCurrentlyPlaying();
+
+    await trackUserAction(
+      interaction.user.id,
+      interaction.user.username,
+      'NOW_PLAYING_VIEW',
+      currentTrack
+    );
     
     if (!currentTrack) {
       await interaction.editReply('No track is currently playing.');
@@ -96,6 +104,13 @@ const handleAddSong = async (interaction) => {
 
         const addedTrack = await addSongToQueue(selectedTrack.uri);
 
+        await trackUserAction(
+          interaction.user.id,
+          interaction.user.username,
+          'ADD_SONG',
+          addedTrack
+        );
+
         const successEmbed = new EmbedBuilder()
           .setTitle('Song Added to Queue')
           .setDescription(`Added [${addedTrack.name}](${addedTrack.url})\nby ${addedTrack.artists}`)
@@ -134,6 +149,12 @@ const handleQueue = async (interaction) => {
   await interaction.deferReply();
 
   try {
+    await trackUserAction(
+      interaction.user.id,
+      interaction.user.username,
+      'QUEUE_VIEW',
+      null
+    );
     const queue = await getQueue();
     
     if (queue.length === 0) {

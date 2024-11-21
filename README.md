@@ -82,6 +82,9 @@ SPOTIFY_CLIENT_ID=your_spotify_client_id  # Client ID from Spotify Developer Das
 SPOTIFY_CLIENT_SECRET=your_spotify_client_secret  # Client Secret from Spotify Developer Dashboard
 SPOTIFY_REDIRECT_URI=http://localhost:8888/callback  # Redirect URI used to get the Refresh Token
 SPOTIFY_REFRESH_TOKEN=your_spotify_refresh_token  # Refresh Token from Spotify
+
+# MongoDB Configuration
+MONGODB_URI=your_mongodb_uri  # MongoDB URI from MongoDB Atlas
 ```
 
 The `SPOTIFY_REFRESH_TOKEN` is a token that you can get by running the script `npm run auth` and following the instructions of the command line.

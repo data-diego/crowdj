@@ -5,6 +5,7 @@ import { handleCommands } from './handlers/commandHandler.js';
 import { handleEvents } from './handlers/eventHandler.js';
 import { initializeSpotify } from './services/spotifyClient.js';
 import logger from './utils/logger.js';
+import connectDB from './config/database.js';
 
 // Load environment variables
 config();
@@ -13,6 +14,7 @@ config();
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions
@@ -31,6 +33,10 @@ const initializeBot = async () => {
     logger.info('Initializing Spotify client...');
     await initializeSpotify();
     logger.info('Spotify client initialized successfully');
+
+    // Connect to MongoDB
+    logger.info('Connecting to MongoDB...');
+    await connectDB();
     
     // Register commands
     await registerCommands();
