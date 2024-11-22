@@ -58,7 +58,7 @@ export const getQueue = async () => {
 
 export const searchTracks = async (query) => {
   try {
-    const response = await spotifyApi.searchTracks(query, { limit: 5 });
+    const response = await spotifyApi.searchTracks(query, { limit: 3 });
     
     if (!response.body.tracks.items.length) {
       throw new Error('No tracks found matching the query');
@@ -91,6 +91,16 @@ export const addSongToQueue = async (trackUri) => {
     };
   } catch (error) {
     logger.error('Error adding song to queue:', error);
+    throw error;
+  }
+};
+
+export const skipToNext = async () => {
+  try {
+    await spotifyApi.skipToNext();
+    logger.info('Skipped to next track');
+  } catch (error) {
+    logger.error('Error skipping to next track:', error);
     throw error;
   }
 };

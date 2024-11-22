@@ -2,6 +2,7 @@ import { EmbedBuilder } from 'discord.js';
 import logger from '../utils/logger.js';
 import { getCurrentlyPlaying, addSongToQueue, getQueue, searchTracks } from '../services/spotifyService.js';
 import { trackUserAction } from '../services/actionService.js';
+import { checkRateLimit, formatRateLimitResponse } from '../services/rateLimit.js';
 
 const handlePing = async (interaction) => {
   const latency = Math.round(interaction.client.ws.ping);
@@ -53,12 +54,20 @@ const handleNowPlaying = async (interaction) => {
   }
 };
 
-const NUMBER_EMOJIS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'];
+const NUMBER_EMOJIS = ['1️⃣', '2️⃣', '3️⃣'];
 
 const handleAddSong = async (interaction) => {
   await interaction.deferReply();
 
   try {
+    const rateLimit = await checkRateLimit(interaction.user.id);
+    if (!rateLimit.isAllowed) {
+      await interaction.editReply({ 
+        content: formatRateLimitResponse(rateLimit),
+        ephemeral: true 
+      });
+      return;
+    }
     const query = interaction.options.getString('song');
     const tracks = await searchTracks(query);
 
@@ -203,15 +212,10 @@ export const handleCommands = (client) => {
       logger.warn(`No handler found for command: ${interaction.commandName}`);
       return;
     }
-
-    try {
+    try{
       await handler(interaction);
-    } catch (error) {
-      logger.error(`Error executing command ${interaction.commandName}:`, error);
-      await interaction.reply({
-        content: 'There was an error executing this command.',
-        ephemeral: true
-      });
+    }catch{
+      
     }
   });
 };
