@@ -15,7 +15,8 @@ const VOTE_WEIGHTS = {
   '🤮': -2   // Hate it
 };
 
-const SKIP_THRESHOLD = -3; // Adjust this value based on your needs
+const SKIP_THRESHOLD = -15; // Adjust this value based on your needs
+
 const REACTIONS = Object.keys(VOTE_WEIGHTS);
 
 const createNowPlayingEmbed = async (track, addedBy) => {
