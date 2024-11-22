@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import Action from '../models/Action.js';
 import logger from '../utils/logger.js';
 
-const findUserWhoAddedTrack = async (trackName) => {
+export const findUserWhoAddedTrack = async (trackName) => {
   try {
     const action = await Action.findOne({
       'action': 'ADD_SONG',
@@ -16,10 +16,8 @@ const findUserWhoAddedTrack = async (trackName) => {
   }
 };
 
-export const postTrackChange = async (track) => {
-  try {
-    const addedBy = await findUserWhoAddedTrack(track.name);
-    
+export const postTrackChange = async (track, addedBy) => {
+  try {    
     const trackData = {
       eventId: "k17fa3tw4d1c383ce493gj7bf174yyra",
       name: track.name,

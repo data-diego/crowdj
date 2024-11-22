@@ -1,7 +1,7 @@
 import logger from '../utils/logger.js';
 import { getCurrentlyPlaying, skipToNext } from '../services/spotifyService.js';
 import { EmbedBuilder } from 'discord.js';
-import { postTrackChange } from '../services/trackService.js';
+import { postTrackChange, findUserWhoAddedTrack  } from '../services/trackService.js';
 
 let lastTrackId = null;
 let checkInterval = null;
@@ -18,13 +18,17 @@ const VOTE_WEIGHTS = {
 const SKIP_THRESHOLD = -3; // Adjust this value based on your needs
 const REACTIONS = Object.keys(VOTE_WEIGHTS);
 
-const createNowPlayingEmbed = (track) => {
+const createNowPlayingEmbed = async (track, addedBy) => {
+  const addedByText = addedBy ? `Added by: ${addedBy}\n` : '';
   return new EmbedBuilder()
     .setColor(0x1DB954)
     .setTitle('Now Playing 🎵')
-    .setDescription(`[${track.name}](${track.url})\nby ${track.artists}\n\nReact to vote:\n😍 Love it (+2)\t👍 Like it (+1)\t👎 Dislike it (-1)\t🤮 Hate it (-2)`)
+    .setDescription(
+      `[${track.name}](${track.url})\nby ${track.artists}\n${addedByText}\n` +
+      `React to vote:\n😍 Love it (+2)\t👍 Like it (+1)\t👎 Dislike it (-1)\t🤮 Hate it (-2)`
+    )
     .setThumbnail(track.albumArt)
-    .setFooter({ text: `Skip threshold: ${SKIP_THRESHOLD}` })
+    .setFooter({ text: `Skip threshold: ${SKIP_THRESHOLD}` });
 };
 
 const calculateVoteScore = async (message) => {
@@ -78,11 +82,13 @@ const checkCurrentTrack = async (client) => {
     
     if (trackId !== lastTrackId) {
       lastTrackId = trackId;
-      await postTrackChange(currentTrack);
+      const addedBy = await findUserWhoAddedTrack(currentTrack.name);
+
+      await postTrackChange(currentTrack, addedBy);
 
       // Send the now playing message to all guilds
       client.guilds.cache.forEach(async (guild) => {
-        const embed = createNowPlayingEmbed(currentTrack);
+        const embed = await createNowPlayingEmbed(currentTrack, addedBy);
         const channel = guild.channels.cache.find(
           channel => channel.type === 0 && 
           channel.name.toLowerCase() === 'crowdj' &&
