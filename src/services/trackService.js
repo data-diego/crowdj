@@ -19,7 +19,7 @@ export const findUserWhoAddedTrack = async (trackName) => {
 export const postTrackChange = async (track, addedBy) => {
   try {    
     const trackData = {
-      eventId: process.env.API_EVENT_ID,
+      eventId: process.env.API_EVENT_ID || '',
       name: track.name,
       artists: track.artists,
       url: track.url,
