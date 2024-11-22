@@ -1,6 +1,7 @@
 import logger from '../utils/logger.js';
 import { getCurrentlyPlaying, skipToNext } from '../services/spotifyService.js';
 import { EmbedBuilder } from 'discord.js';
+import { postTrackChange } from '../services/trackService.js';
 
 let lastTrackId = null;
 let checkInterval = null;
@@ -71,11 +72,13 @@ const checkCurrentTrack = async (client) => {
     if (!currentTrack) {
       return;
     }
-
+    
+    
     const trackId = `${currentTrack.name}-${currentTrack.artists}`;
     
     if (trackId !== lastTrackId) {
       lastTrackId = trackId;
+      await postTrackChange(currentTrack);
 
       // Send the now playing message to all guilds
       client.guilds.cache.forEach(async (guild) => {

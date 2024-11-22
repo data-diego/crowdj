@@ -13,8 +13,8 @@ CrowDJ is a Discord bot that democratizes music control at hackathons by letting
   - Everyone gets a voice in the event's musical backdrop
 
 - 👥 **Community Skip Votes**
-  - Initiate skip votes for current tracks
-  - Automatic skip when vote threshold is reached
+  - The bot automatically initiates a skip votation for the current track playing
+  - Song skips when vote threshold is reached
   - Fair and democratic music control
 
 - 📋 **Live Queue Display**
@@ -24,7 +24,7 @@ CrowDJ is a Discord bot that democratizes music control at hackathons by letting
 
 - 🛡️ **Smart Moderation**
   - Basic content filtering
-  - Duration limits
+  - Allow to add X songs in Y minutes per user
   - Keeps the playlist flowing and appropriate
 
 ## 🤖 Commands
@@ -32,6 +32,7 @@ CrowDJ is a Discord bot that democratizes music control at hackathons by letting
 - `/help` - Display the list of available commands
 - `/nowplaying` - Display the current song
 - `/addsong <song>` - Add a song to the queue
+- `/queue` - Display the current queue
 
 ## 🔧 Technical Stack
 
@@ -85,6 +86,9 @@ SPOTIFY_REFRESH_TOKEN=your_spotify_refresh_token  # Refresh Token from Spotify
 
 # MongoDB Configuration
 MONGODB_URI=your_mongodb_uri  # MongoDB URI from MongoDB Atlas
+
+# Other Configuration
+API_ENDPOINT=http://localhost:3000/api/nowplaying  # API endpoint if you want to send current track information
 ```
 
 The `SPOTIFY_REFRESH_TOKEN` is a token that you can get by running the script `npm run auth` and following the instructions of the command line.
