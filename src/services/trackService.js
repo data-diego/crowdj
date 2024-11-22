@@ -24,7 +24,7 @@ export const postTrackChange = async (track, addedBy) => {
       artists: track.artists,
       url: track.url,
       albumArt: track.albumArt,
-      addedBy: addedBy || '',
+      addedBy: addedBy || null,
       timestamp: new Date().toISOString()
     };
 
