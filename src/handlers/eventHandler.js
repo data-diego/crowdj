@@ -91,7 +91,7 @@ const checkCurrentTrack = async (client) => {
         const embed = await createNowPlayingEmbed(currentTrack, addedBy);
         const channel = guild.channels.cache.find(
           channel => channel.type === 0 && 
-          channel.name.toLowerCase() === 'crowdj' &&
+          channel.name.toLowerCase() === 'music' &&
           channel.permissionsFor(client.user).has('SendMessages')
         );
         
